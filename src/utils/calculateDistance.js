@@ -22,6 +22,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
         Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
     ) * R;
 
-  // Valeur retourné en km
-  return d;
+  // Valeur retourné en km (2 chiffres après la virgule)
+  return d.toFixed(2);
 };
+
+export default calculateDistance;
