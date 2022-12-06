@@ -6,7 +6,7 @@ import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
 function MapView() {
-  const [draggable, setDraggable] = useState(false);
+  const [draggable, setDraggable] = useState(true);
 
   const perso1Coord = [48.90114974975586, 2.2136828899383545]; //nanterre pref
   const perso2Coord = [48.8953328, 2.2561602]; //courbevoie
@@ -108,13 +108,13 @@ function MapView() {
           ref={markerRef}
           icon={arriveIcon}
         >
-          <Popup minWidth={90}>
+          {/* <Popup minWidth={90}>
             <span onClick={toggleDraggable}>
               {draggable
                 ? "Déplacer le pt d'arrivée"
                 : "Cliquer ici pour déplacer le pt d'arrivée"}
             </span>
-          </Popup>
+          </Popup> */}
         </Marker>
 
         <Polyline
@@ -122,22 +122,14 @@ function MapView() {
           color="red"
           weight={4}
         />
-        <Polyline
-          positions={[resto1Coord, arriveeCoord]}
-          color="red"
-          weight={4}
-        />
+        <Polyline positions={[resto1Coord, position]} color="red" weight={4} />
 
         <Polyline
           positions={[perso2Coord, resto2Coord]}
           color="blue"
           weight={4}
         />
-        <Polyline
-          positions={[resto2Coord, arriveeCoord]}
-          color="blue"
-          weight={4}
-        />
+        <Polyline positions={[resto2Coord, position]} color="blue" weight={4} />
 
         <Polyline
           positions={[perso3Coord, resto3Coord]}
@@ -145,7 +137,7 @@ function MapView() {
           weight={4}
         />
         <Polyline
-          positions={[resto3Coord, arriveeCoord]}
+          positions={[resto3Coord, position]}
           color="yellow"
           weight={4}
         />
