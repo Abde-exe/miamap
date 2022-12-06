@@ -4,12 +4,12 @@ import { io } from "socket.io-client";
 export const SocketContext = createContext({});
 
 const SocketProvider = ({ room, pseudo, children }) => {
-  const socket = io(process.env.REACT_APP_SOCKET);
+  const socket = io("http://localhost:9999/");
 
   const sio = {
-    // updateSlide: (action, value, prevSlide) => {
-    //   socket.emit('update_slide', { action, value, prevSlide })
-    // }
+    sendMessage: (action, value) => {
+      socket.emit("send_message", { action, value });
+    },
   };
 
   /**
@@ -20,6 +20,7 @@ const SocketProvider = ({ room, pseudo, children }) => {
   */
 
   useEffect(() => {
+    console.log(socket);
     socket.emit("join_room", room, (res) => {
       console.log(res.value);
     });
@@ -27,7 +28,7 @@ const SocketProvider = ({ room, pseudo, children }) => {
     return () => {
       socket.disconnect();
     };
-  }, [sio]);
+  }, [room, socket]);
 
   return (
     <SocketContext.Provider value={{ socket, sio, pseudo, room }}>

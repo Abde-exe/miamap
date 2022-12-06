@@ -1,20 +1,20 @@
-import ListeRestos from './components/ListeRestos';
-import MapView from './components/MapView';
-import './App.css';
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import SocketAuth from "./pages/SocketAuth";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{ display: 'flex' }}>
-          <ListeRestos />
-          <MapView />
-          <ListeRestos />
-        </div>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SocketAuth />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
-
 }
 
 export default App;
