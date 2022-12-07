@@ -1,26 +1,29 @@
 import React from 'react';
-import { Button, List, Typography } from 'antd';
+import { List, Typography } from 'antd';
 
-const data = [
-  { name: 'Resto Jap', distance: 5 },
-  { name: 'Resto Viet', distance: 6 },
-  { name: 'Resto Italien', distance: 2 },
-];
-
-export default function ListeRestos() {
+export default function ListeRestos({
+  restosList,
+  setSelectedResto,
+  selectedResto,
+}) {
+  const onClickResto = (item) => {
+    setSelectedResto(item);
+    console.log('selected', selectedResto);
+  };
+  //console.log('test', selected);
   return (
     <>
       <List
         header={<h1>Liste Restos</h1>}
-        //footer={<div>Footer</div>}
         bordered
-        dataSource={data}
+        dataSource={restosList}
         renderItem={(item) => (
-          <List.Item>
+          <List.Item
+            className={item.id == selectedResto.id ? 'selected' : ''}
+            onClick={() => onClickResto(item)}
+          >
             {item.name}
             <br />
-            Distance :
-            <Typography.Text mark> {item.distance} km</Typography.Text>
           </List.Item>
         )}
       />

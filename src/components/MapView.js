@@ -5,13 +5,22 @@ import { TileLayer } from 'react-leaflet/TileLayer';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
-function MapView() {
+function MapView({
+  user,
+  setuser,
+  restosList,
+  setSelectedResto,
+  selectedResto,
+  persosList,
+  ptArrivee,
+  setptArrivee,
+}) {
   const [draggable, setDraggable] = useState(true);
 
   const perso1Coord = [48.90114974975586, 2.2136828899383545]; //nanterre pref
   const perso2Coord = [48.8953328, 2.2561602]; //courbevoie
   const perso3Coord = [48.8841522, 2.2368863]; //puteaux
-  const arriveeCoord = [48.893537, 2.226961]; //arche
+
   const resto1Coord = [48.89619150760733, 2.2232163600256305]; //resto 1
   const resto2Coord = [48.898683545328545, 2.264794144566431]; //resto 2
   const resto3Coord = [48.89051539771106, 2.2364121181986674]; //resto 3
@@ -50,7 +59,6 @@ function MapView() {
     shadowAnchor: [22, 94],
   });
 
-  const [position, setPosition] = useState(arriveeCoord);
   //const pointArrivee = [48.893537, 2.226961];
   const markerRef = useRef(null);
 
@@ -59,20 +67,30 @@ function MapView() {
       dragend() {
         const marker = markerRef.current;
         if (marker != null) {
-          setPosition(marker.getLatLng());
+          setptArrivee(marker.getLatLng());
         }
       },
     }),
     []
   );
 
-  const toggleDraggable = useCallback(() => {
-    setDraggable((d) => !d);
-  }, []);
+  // const toggleDraggable = useCallback(() => {
+  //   setDraggable((d) => !d);
+  // }, []);
+
+  // const setRestoMarkers = () => {
+  //   restosList.forEach((resto) => {
+  //     return (
+  //       <Marker position={resto.ptArrivee} icon={restoIcon}>
+  //         <Popup>resto.name</Popup>
+  //       </Marker>
+  //     );
+  //   });
+  // };
   return (
     <>
       <MapContainer
-        center={position}
+        center={ptArrivee}
         zoom={13}
         scrollWheelZoom={false}
         className="leaflet-container"
@@ -81,8 +99,8 @@ function MapView() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={perso1Coord} icon={perso1Icon}>
-          <Popup>Perso1</Popup>
+        <Marker position={user.position} icon={perso1Icon}>
+          <Popup>{user.name}</Popup>
         </Marker>
         <Marker position={perso2Coord} icon={perso2Icon}>
           <Popup>Perso2</Popup>
@@ -91,53 +109,47 @@ function MapView() {
           <Popup>Perso3</Popup>
         </Marker>
 
-        <Marker position={resto1Coord} icon={restoIcon}>
-          <Popup>Resto1</Popup>
-        </Marker>
-        <Marker position={resto2Coord} icon={restoIcon}>
-          <Popup>Resto2</Popup>
-        </Marker>
-        <Marker position={resto3Coord} icon={restoIcon}>
-          <Popup>Resto3</Popup>
-        </Marker>
-
+        {restosList.map((resto) => {
+          return (
+            <Marker position={resto.position} icon={restoIcon}>
+              <Popup>{resto.name}</Popup>
+            </Marker>
+          );
+        })}
         <Marker
           draggable={draggable}
           eventHandlers={eventHandlers}
-          position={position}
+          position={ptArrivee}
           ref={markerRef}
           icon={arriveIcon}
-        >
-          {/* <Popup minWidth={90}>
-            <span onClick={toggleDraggable}>
-              {draggable
-                ? "Déplacer le pt d'arrivée"
-                : "Cliquer ici pour déplacer le pt d'arrivée"}
-            </span>
-          </Popup> */}
-        </Marker>
-
+        ></Marker>
         <Polyline
-          positions={[perso1Coord, resto1Coord]}
+          positions={[perso1Coord, selectedResto.position]}
           color="red"
           weight={4}
         />
-        <Polyline positions={[resto1Coord, position]} color="red" weight={4} />
-
+        <Polyline
+          positions={[selectedResto.position, ptArrivee]}
+          color="red"
+          weight={4}
+        />
         <Polyline
           positions={[perso2Coord, resto2Coord]}
           color="blue"
           weight={4}
         />
-        <Polyline positions={[resto2Coord, position]} color="blue" weight={4} />
-
+        <Polyline
+          positions={[resto2Coord, ptArrivee]}
+          color="blue"
+          weight={4}
+        />
         <Polyline
           positions={[perso3Coord, resto3Coord]}
           color="yellow"
           weight={4}
         />
         <Polyline
-          positions={[resto3Coord, position]}
+          positions={[resto3Coord, ptArrivee]}
           color="yellow"
           weight={4}
         />
