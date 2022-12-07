@@ -51,19 +51,22 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    console.log("user", user);
     updateUserData(user);
   }, [ptArrivee]);
 
   const updateUserData = (user) => {
     let resto = restos.find((resto) => resto.id === user.id);
-    console.log("resto", resto);
 
     let distanceToResto = calculateDistance(
       ...user.position,
       ...resto.position
     );
-    let distanceToArrivee = calculateDistance(...resto.position, ...ptArrivee);
+    let distanceToArrivee = calculateDistance(
+      resto.position[0],
+      resto.position[1],
+      ptArrivee[0],
+      ptArrivee[1]
+    );
     let distanceTotale = distanceToResto + distanceToArrivee;
 
     let timeTotal = calculateTime(distanceTotale, 5);

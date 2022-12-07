@@ -1,20 +1,23 @@
-import { List } from 'antd';
-import React from 'react';
+import { List } from "antd";
+import React, { useContext } from "react";
+import { SocketContext } from "../services/socket";
 
 function ListePersos({ persosList, setSelectedPerso, selectedPerso }) {
+  const { room } = useContext(SocketContext);
+
   const onClickPerso = (item) => {
     setSelectedPerso(item);
-    console.log('selected', selectedPerso);
+    console.log("selected", selectedPerso);
   };
   return (
     <>
       <List
-        header={<h1>Liste Persos</h1>}
+        header={<h1>Salle {room}</h1>}
         bordered
         dataSource={persosList}
         renderItem={(item) => (
           <List.Item
-            className={item.id == selectedPerso.id ? 'selected' : ''}
+            className={item.id == selectedPerso.id ? "selected" : ""}
             onClick={() => onClickPerso(item)}
           >
             {item.name}

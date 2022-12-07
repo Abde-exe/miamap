@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import './styles.css';
-import { MapContainer, Polyline } from 'react-leaflet';
-import { TileLayer } from 'react-leaflet/TileLayer';
-import { Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import "./styles.css";
+import { MapContainer, Polyline } from "react-leaflet";
+import { TileLayer } from "react-leaflet/TileLayer";
+import { Marker, Popup } from "react-leaflet";
+import L from "leaflet";
 
 function MapView({
   user,
@@ -26,34 +26,34 @@ function MapView({
   const resto3Coord = [48.89051539771106, 2.2364121181986674]; //resto 3
 
   const arriveIcon = L.icon({
-    iconUrl: require('../assets/markerArrivee.png'),
+    iconUrl: require("../assets/markerArrivee.png"),
     iconSize: [50, 60],
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
   });
 
   const perso1Icon = L.icon({
-    iconUrl: require('../assets/perso1.png'),
+    iconUrl: require("../assets/perso1.png"),
     iconSize: [30, 30],
 
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
   });
   const perso2Icon = L.icon({
-    iconUrl: require('../assets/perso2.png'),
+    iconUrl: require("../assets/perso2.png"),
     iconSize: [30, 30],
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
   });
   const perso3Icon = L.icon({
-    iconUrl: require('../assets/perso3.png'),
+    iconUrl: require("../assets/perso3.png"),
     iconSize: [30, 30],
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
   });
 
   const restoIcon = L.icon({
-    iconUrl: require('../assets/resto.png'),
+    iconUrl: require("../assets/resto.png"),
     iconSize: [30, 30],
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
@@ -109,9 +109,9 @@ function MapView({
           <Popup>Perso3</Popup>
         </Marker>
 
-        {restosList.map((resto) => {
+        {restosList.map((resto, i) => {
           return (
-            <Marker position={resto.position} icon={restoIcon}>
+            <Marker key={i} position={resto.position} icon={restoIcon}>
               <Popup>{resto.name}</Popup>
             </Marker>
           );
