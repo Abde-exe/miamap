@@ -1,38 +1,41 @@
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 import { io } from "socket.io-client";
 
 export const SocketContext = createContext({});
+const socket = io("http://localhost:9999/");
 
-const SocketProvider = ({ room, pseudo, children }) => {
-  const socket = io("http://localhost:9999/");
+const SocketProvider = ({ room, pseudo }) => {
+  const [connected, setConnected] = useState(false);
 
   const sio = {
-    sendMessage: (action, value) => {
-      socket.emit("send_message", { action, value });
+    sendMessage: (value) => {
+      socket.emit("send_message", { pseudo, value });
+    },
+
+    sendArrivalPoint: (value) => {
+      socket.emit("send_arrivalPoint", { pseudo, value });
+    },
+
+    sendArrivalTime: (value) => {
+      socket.emit("send_arrivalTime", { pseudo, value });
+    },
+
+    sendMyData: (value) => {
+      socket.emit("send_myData", { pseudo, value });
     },
   };
 
-  /**
-  To get the number of clients connected to the room
-  socket.on('update_number_user', (res) =>
-    console.log(`${res} personne connecté à la session`),
-  )
-  */
-
   useEffect(() => {
-    console.log(socket);
     socket.emit("join_room", room, (res) => {
       console.log(res.value);
+      setConnected(true);
     });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [room, socket]);
+  }, []);
 
   return (
     <SocketContext.Provider value={{ socket, sio, pseudo, room }}>
-      {children}
+      {connected && <Outlet />}
     </SocketContext.Provider>
   );
 };

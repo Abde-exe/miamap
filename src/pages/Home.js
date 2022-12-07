@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import ListePersos from '../components/ListePersos';
-import ListeRestos from '../components/ListeRestos';
-import MapView from '../components/MapView';
-import calculateTime from '../utils/calculateTime';
-import calculateDistance from '../utils/calculateDistance';
+import { useState, useEffect } from "react";
+import ListePersos from "../components/ListePersos";
+import ListeRestos from "../components/ListeRestos";
+import MapView from "../components/MapView";
+import calculateTime from "../utils/calculateTime";
+import calculateDistance from "../utils/calculateDistance";
 
 const Home = () => {
   //pt d arrivee
@@ -13,24 +13,24 @@ const Home = () => {
   const restos = [
     {
       id: 1,
-      name: 'Resto Jap',
+      name: "Resto Jap",
       position: [48.89619150760733, 2.2232163600256305],
     },
     {
       id: 2,
-      name: 'Resto Viet',
+      name: "Resto Viet",
       position: [48.898683545328545, 2.264794144566431],
     },
     {
       id: 3,
-      name: 'Resto Italien',
+      name: "Resto Italien",
       position: [48.89051539771106, 2.2364121181986674],
     },
   ];
 
   const [user, setuser] = useState({
     id: 1,
-    name: 'Nico',
+    name: "Nico",
     position: [48.90114974975586, 2.2136828899383545],
     restoId: 1,
     distance: 0.4,
@@ -40,24 +40,24 @@ const Home = () => {
   const persos = [
     {
       id: 2,
-      name: 'Alex',
+      name: "Alex",
       position: [48.898683545328545, 2.264794144566431],
     },
     {
       id: 3,
-      name: 'Chachat',
+      name: "Chachat",
       position: [48.89051539771106, 2.2364121181986674],
     },
   ];
 
   useEffect(() => {
-    console.log('user', user);
+    console.log("user", user);
     updateUserData(user);
   }, [ptArrivee]);
 
   const updateUserData = (user) => {
     let resto = restos.find((resto) => resto.id === user.id);
-    console.log('resto', resto);
+    console.log("resto", resto);
 
     let distanceToResto = calculateDistance(
       ...user.position,
@@ -76,10 +76,36 @@ const Home = () => {
   const [persosList, setPersosList] = useState(persos);
   const [selectedPerso, setSelectedPerso] = useState(restosList[0]);
 
+  // const { socket } = useContext(SocketContext);
+  // const [users, setUsers] = useState([]);
+
+  // const setData = ({ pseudo, value }) => {
+  //   const index = users.findIndex((u) => u.name === pseudo);
+  //   let newArr = [...users];
+  //   if (index === -1) {
+  //     newArr.push({
+  //       name: pseudo,
+  //       ...value,
+  //     });
+  //   } else {
+  //     newArr[index] = { ...value };
+  //   }
+
+  //   setUsers([...newArr]);
+  // };
+
+  // useEffect(() => {
+  //   socket.on("get_data", setData);
+
+  //   return () => {
+  //     socket.off("get_data", setData);
+  //   };
+  // }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: "flex" }}>
           <ListeRestos
             restosList={restosList}
             setSelectedResto={setSelectedResto}
