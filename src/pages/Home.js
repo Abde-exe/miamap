@@ -1,158 +1,194 @@
-import { useState, useEffect } from 'react';
-import ListePersos from '../components/ListePersos';
-import ListeRestos from '../components/ListeRestos';
-import MapView from '../components/MapView';
-import calculateTime from '../utils/calculateTime';
-import calculateDistance from '../utils/calculateDistance';
+import { useState, useEffect, useContext } from "react";
+import ListePersos from "../components/ListePersos";
+import ListeRestos from "../components/ListeRestos";
+import MapView from "../components/MapView";
+import calculateTime from "../utils/calculateTime";
+import calculateDistance from "../utils/calculateDistance";
+import { SocketContext } from "../services/socket";
+
+const restos = [
+  {
+    id: 1,
+    name: "Resto Jap",
+    position: [48.89619150760733, 2.2232163600256305],
+  },
+  {
+    id: 2,
+    name: "Resto Viet",
+    position: [48.898683545328545, 2.264794144566431],
+  },
+  {
+    id: 3,
+    name: "Resto Italien",
+    position: [48.89051539771106, 2.2364121181986674],
+  },
+  {
+    id: 4,
+    name: "Resto Français",
+    position: [48.9072794528564, 2.2476304834099325],
+  },
+  {
+    id: 5,
+    name: "Resto Burger",
+    position: [48.88081050733152, 2.211126096065885],
+  },
+  {
+    id: 6,
+    name: "Resto Mexicain",
+    position: [48.885184588190384, 2.2769836445929403],
+  },
+];
 
 const Home = () => {
-  //pt d arrivee
-  const [ptArrivee, setptArrivee] = useState([48.893537, 2.226961]);
+  const { socket, sio, pseudo } = useContext(SocketContext);
+  const [users, setUsers] = useState([]);
+  const [arrivalPoint, setArrivalPoint] = useState([48.893537, 2.226961]);
 
-  //data------------------------
-  const restos = [
-    {
-      id: 1,
-      name: 'Resto Jap',
-      position: [48.89619150760733, 2.2232163600256305],
-    },
-    {
-      id: 2,
-      name: 'Resto Viet',
-      position: [48.898683545328545, 2.264794144566431],
-    },
-    {
-      id: 3,
-      name: 'Resto Italien',
-      position: [48.89051539771106, 2.2364121181986674],
-    },
-    {
-      id: 4,
-      name: 'Resto Français',
-      position: [48.9072794528564, 2.2476304834099325],
-    },
-    {
-      id: 5,
-      name: 'Resto Burger',
-      position: [48.88081050733152, 2.211126096065885],
-    },
-    {
-      id: 6,
-      name: 'Resto Mexicain',
-      position: [48.885184588190384, 2.2769836445929403],
-    },
-  ];
-  const persos = [
-    {
-      id: 2,
-      name: 'Alex',
-      position: [48.898683545328545, 2.264794144566431],
-      restoId: 2,
-      icon: 'perso2.png',
-    },
-    {
-      id: 3,
-      name: 'Chachat',
-      position: [48.89051539771106, 2.2364121181986674],
-      restoId: 3,
-      icon: 'perso3.png',
-    },
-  ];
+  const setData = ({ name, data }) => {
+    const index = users.findIndex((u) => u.name === name);
+    let newArr = [...users];
+    if (index === -1) {
+      newArr.push({
+        name,
+        ...data,
+      });
+    } else {
+      newArr[index] = { ...newArr[index], ...data };
+    }
 
-  //----------------------
-
-  //states------------------------
-  const [restosList, setRestosList] = useState(restos);
-  const [selectedResto, setSelectedResto] = useState(restosList[0]);
-  const [persosList, setPersosList] = useState(persos);
-  const [selectedPerso, setSelectedPerso] = useState(restosList[0]);
-
-  const [user, setuser] = useState({
-    id: 1,
-    name: 'Nico',
-    position: [48.90114974975586, 2.2136828899383545],
-    restoId: 1,
-    distance: 0.4,
-    time: 4.8,
-    icon: 'perso1.png',
-  });
-
-  // const { socket } = useContext(SocketContext);
-  // const [users, setUsers] = useState([]);
-
-  // const setData = ({ pseudo, value }) => {
-  //   const index = users.findIndex((u) => u.name === pseudo);
-  //   let newArr = [...users];
-  //   if (index === -1) {
-  //     newArr.push({
-  //       name: pseudo,
-  //       ...value,
-  //     });
-  //   } else {
-  //     newArr[index] = { ...value };
-  //   }
-
-  //   setUsers([...newArr]);
-  // };
-
-  // useEffect(() => {
-  //   socket.on("get_data", setData);
-
-  //   return () => {
-  //     socket.off("get_data", setData);
-  //   };
-  // }, []);
+    setUsers([...newArr]);
+  };
 
   useEffect(() => {
-    updateUserData(user);
-  }, [ptArrivee]);
+    socket.on("get_data", setData);
 
-  // functions ----------
-  const updateUserData = (user) => {
-    let resto = restos.find((resto) => resto.id === user.id);
+    return () => {
+      socket.off("get_data", setData);
+    };
+  }, []);
+
+  const updateUsersData = () => {
+    let arr = [...users];
+
+    arr.map((user) => {
+      let resto = restos.find((resto) => resto.id === user.restoId);
+      let distanceToResto = calculateDistance(
+        user.position[0],
+        user.position[1],
+        resto.position[0],
+        resto.position[1]
+      );
+      let distanceToArrivee = calculateDistance(
+        resto.position[0],
+        resto.position[1],
+        arrivalPoint[0],
+        arrivalPoint[0]
+      );
+      let distanceTotale = distanceToResto + distanceToArrivee;
+      let timeTotal = calculateTime(distanceTotale, 5);
+
+      return {
+        ...user,
+        distance: distanceTotale,
+        time: timeTotal,
+      };
+    });
+
+    setUsers(arr);
+  };
+
+  const updateArrivalPoint = ({ name, data }) => {
+    setArrivalPoint(data);
+    updateUsersData();
+  };
+
+  useEffect(() => {
+    socket.on("get_arrivalPoint", updateArrivalPoint);
+
+    return () => {
+      socket.off("get_arrivalPoint", updateArrivalPoint);
+    };
+  }, []);
+
+  useEffect(() => {
+    updateUsersData();
+  }, [arrivalPoint]);
+
+  const handleResto = (resto) => {
+    const index = users.findIndex((user) => user.name === pseudo);
+    let user = users[index];
+    let newUsers = [...users];
+
+    if (index === -1) {
+      user = {
+        name: pseudo,
+        position: [48.90114974975586, 2.2136828899383545],
+        icon: "perso1.png",
+      };
+    }
 
     let distanceToResto = calculateDistance(
-      ...user.position,
-      ...resto.position
+      user.position[0],
+      user.position[1],
+      resto.position[0],
+      resto.position[1]
     );
     let distanceToArrivee = calculateDistance(
       resto.position[0],
       resto.position[1],
-      ptArrivee[0],
-      ptArrivee[1]
+      arrivalPoint[0],
+      arrivalPoint[0]
     );
     let distanceTotale = distanceToResto + distanceToArrivee;
-
     let timeTotal = calculateTime(distanceTotale, 5);
 
-    // setuser({ ...user, distance: distanceTotale });
+    if (index === -1) {
+      setUsers([
+        {
+          ...user,
+          restoId: resto.id,
+          distance: distanceTotale,
+          time: timeTotal,
+        },
+      ]);
+    } else {
+      newUsers[index] = {
+        ...user,
+        restoId: resto.id,
+        distance: distanceTotale,
+        time: timeTotal,
+      };
+      setUsers(newUsers);
+    }
+
+    // sio.sendMydata({
+    //   ...user,
+    //   restoId: resto.id,
+    //   distance: distanceTotale,
+    //   time: timeTotal,
+    // });
   };
+
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
+
   return (
     <div className="App">
       <header className="App-header">
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: "flex" }}>
           <ListeRestos
-            restosList={restosList}
-            setSelectedResto={setSelectedResto}
-            selectedResto={selectedResto}
+            restosList={restos}
+            handleResto={handleResto}
+            user={users.find((u) => u.name === pseudo)}
           />
           <MapView
-            user={user}
-            setuser={setuser}
-            ptArrivee={ptArrivee}
-            setptArrivee={setptArrivee}
-            restosList={restosList}
-            persosList={persosList}
-            setSelectedResto={setSelectedResto}
-            selectedResto={selectedResto}
+            users={users}
+            arrivalPoint={arrivalPoint}
+            setArrivalPoint={setArrivalPoint}
+            restosList={restos}
           />
-          <ListePersos
-            user={user}
-            persosList={persosList}
-            setSelectedPerso={setSelectedPerso}
-            selectedPerso={selectedPerso}
-            restosList={restosList}
-          />
+          <ListePersos persosList={users} />
         </div>
       </header>
     </div>

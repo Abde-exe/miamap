@@ -23,7 +23,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
     ) * R;
 
   // Valeur retourné en km (2 chiffres après la virgule)
-  return d.toFixed(2);
+  console.log("number", d);
+  return Number(d.toFixed(2));
 };
 
 export default calculateDistance;

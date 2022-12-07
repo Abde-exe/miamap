@@ -1,16 +1,6 @@
-import React from 'react';
-import { List, Typography } from 'antd';
+import { List } from "antd";
 
-export default function ListeRestos({
-  restosList,
-  setSelectedResto,
-  selectedResto,
-}) {
-  const onClickResto = (item) => {
-    setSelectedResto(item);
-    console.log('selected', selectedResto);
-  };
-  //console.log('test', selected);
+export default function ListeRestos({ restosList, handleResto, user }) {
   return (
     <>
       <List
@@ -19,10 +9,10 @@ export default function ListeRestos({
         dataSource={restosList}
         renderItem={(item) => (
           <List.Item
-            className={item.id == selectedResto.id ? 'selected' : ''}
-            onClick={() => onClickResto(item)}
+            className={user && item.id === user.restoId ? "selected" : ""}
+            onClick={() => handleResto(item)}
           >
-            <h3 className={item.id == selectedResto.id ? 'selected' : ''}>
+            <h3 className={user && item.id === user.restoId ? "selected" : ""}>
               {item.name}
             </h3>
             <br />

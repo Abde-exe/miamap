@@ -5,7 +5,7 @@
  * @returns {int} Temps en heure (2 chiffre après la virgule)
  */
 const calculateTime = (d, v) => {
-  return (d / v).toFixed(2);
+  return Number((d / v).toFixed(2));
 };
 
 export default calculateTime;

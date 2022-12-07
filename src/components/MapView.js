@@ -1,20 +1,13 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import "./styles.css";
 import { MapContainer, Polyline } from "react-leaflet";
 import { TileLayer } from "react-leaflet/TileLayer";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import { SocketContext } from "../services/socket";
 
-function MapView({
-  user,
-  setuser,
-  restosList,
-  setSelectedResto,
-  selectedResto,
-  persosList,
-  ptArrivee,
-  setptArrivee,
-}) {
+function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
+  const { sio } = useContext(SocketContext);
   const [draggable, setDraggable] = useState(true);
 
   const perso1Coord = [48.90114974975586, 2.2136828899383545]; //nanterre pref
@@ -67,7 +60,9 @@ function MapView({
       dragend() {
         const marker = markerRef.current;
         if (marker != null) {
-          setptArrivee(marker.getLatLng());
+          const point = marker.getLatLng();
+          sio.sendArrivalPoint([marker.lat, marker.lng]);
+          setArrivalPoint([marker.lat, marker.lng]);
         }
       },
     }),
@@ -81,7 +76,7 @@ function MapView({
   // const setRestoMarkers = () => {
   //   restosList.forEach((resto) => {
   //     return (
-  //       <Marker position={resto.ptArrivee} icon={restoIcon}>
+  //       <Marker position={resto.arrivalPoint} icon={restoIcon}>
   //         <Popup>resto.name</Popup>
   //       </Marker>
   //     );
@@ -90,7 +85,7 @@ function MapView({
   return (
     <>
       <MapContainer
-        center={ptArrivee}
+        center={arrivalPoint}
         zoom={13}
         scrollWheelZoom={false}
         className="leaflet-container"
@@ -99,15 +94,41 @@ function MapView({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={user.position} icon={perso1Icon}>
-          <Popup>{user.name}</Popup>
-        </Marker>
-        <Marker position={perso2Coord} icon={perso2Icon}>
+        {users.map((user, i) => {
+          console.log(user);
+          return (
+            <div key={i}>
+              <Marker position={user.position} icon={perso1Icon}>
+                <Popup>{user.name}</Popup>
+              </Marker>
+              <Polyline
+                positions={[
+                  user.position,
+                  restosList.find((resto) => resto.id === user.restoId)
+                    .position,
+                ]}
+                color="red"
+                weight={4}
+              />
+              <Polyline
+                positions={[
+                  restosList.find((resto) => resto.id === user.restoId)
+                    .position,
+                  arrivalPoint,
+                ]}
+                color="red"
+                weight={4}
+              />
+            </div>
+          );
+        })}
+
+        {/* <Marker position={perso2Coord} icon={perso2Icon}>
           <Popup>Perso2</Popup>
         </Marker>
         <Marker position={perso3Coord} icon={perso3Icon}>
           <Popup>Perso3</Popup>
-        </Marker>
+        </Marker> */}
 
         {restosList.map((resto, i) => {
           return (
@@ -119,40 +140,10 @@ function MapView({
         <Marker
           draggable={draggable}
           eventHandlers={eventHandlers}
-          position={ptArrivee}
+          position={arrivalPoint}
           ref={markerRef}
           icon={arriveIcon}
         ></Marker>
-        <Polyline
-          positions={[perso1Coord, selectedResto.position]}
-          color="red"
-          weight={4}
-        />
-        <Polyline
-          positions={[selectedResto.position, ptArrivee]}
-          color="red"
-          weight={4}
-        />
-        <Polyline
-          positions={[perso2Coord, resto2Coord]}
-          color="blue"
-          weight={4}
-        />
-        <Polyline
-          positions={[resto2Coord, ptArrivee]}
-          color="blue"
-          weight={4}
-        />
-        <Polyline
-          positions={[perso3Coord, resto3Coord]}
-          color="yellow"
-          weight={4}
-        />
-        <Polyline
-          positions={[resto3Coord, ptArrivee]}
-          color="yellow"
-          weight={4}
-        />
       </MapContainer>
     </>
   );
