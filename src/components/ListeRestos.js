@@ -22,7 +22,9 @@ export default function ListeRestos({
             className={item.id == selectedResto.id ? 'selected' : ''}
             onClick={() => onClickResto(item)}
           >
-            {item.name}
+            <h3 className={item.id == selectedResto.id ? 'selected' : ''}>
+              {item.name}
+            </h3>
             <br />
           </List.Item>
         )}
