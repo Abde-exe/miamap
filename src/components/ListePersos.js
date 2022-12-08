@@ -1,6 +1,7 @@
 import { List } from "antd";
 import React, { useContext } from "react";
 import { SocketContext } from "../services/socket";
+import timeFormat from "../utils/timeFormat";
 function ListePersos({ persosList }) {
   const { room } = useContext(SocketContext);
   return (
@@ -24,7 +25,7 @@ function ListePersos({ persosList }) {
             <br />
             {item.distance} km
             <br />
-            {item.time.toFixed(0)} h {((item.time % 1) * 60).toFixed(0)}
+            {timeFormat(item.time)}
           </List.Item>
         )}
       />

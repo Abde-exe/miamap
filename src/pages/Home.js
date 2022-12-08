@@ -5,7 +5,8 @@ import MapView from "../components/MapView";
 import calculateTime from "../utils/calculateTime";
 import calculateDistance from "../utils/calculateDistance";
 import { SocketContext } from "../services/socket";
-import soustractTime from "../utils/soustractTime";
+import timeFormat from "../utils/timeFormat";
+import coGenerator from "../utils/coGenerator";
 
 const restos = [
   {
@@ -119,7 +120,7 @@ const Home = () => {
     if (index === -1) {
       user = {
         name: pseudo,
-        position: [48.90114974975586, 2.2136828899383545],
+        position: coGenerator(48.893537, 2.226961, 2),
         icon: "perso1.png",
       };
     }
@@ -175,9 +176,9 @@ const Home = () => {
     <div className="App">
       <header className="App-header">
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <h3 style={{ position: "absolute", zIndex: 99 }}>
+          <h3 style={{ position: "absolute", zIndex: 999 }}>
             Pour arriver à 13h : tu dois partir à{" "}
-            {soustractTime(13, users.find((u) => u.name === pseudo)?.time ?? 0)}
+            {timeFormat(13 - (users.find((u) => u.name === pseudo)?.time ?? 0))}
           </h3>
           <ListeRestos
             restosList={restos}
