@@ -5,6 +5,7 @@ import { TileLayer } from 'react-leaflet/TileLayer';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { SocketContext } from '../services/socket';
+import PersoSvg from './PersoSvg';
 
 function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
   const { sio } = useContext(SocketContext);
@@ -107,7 +108,7 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
                   restosList.find((resto) => resto.id === user.restoId)
                     .position,
                 ]}
-                color="red"
+                color={user.icon}
                 weight={4}
               />
               <Polyline
@@ -116,7 +117,7 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
                     .position,
                   arrivalPoint,
                 ]}
-                color="red"
+                color={user.icon}
                 weight={4}
               />
             </div>
@@ -125,7 +126,10 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
 
         {me && (
           <>
-            <Marker position={me.position} icon={perso1Icon}>
+            <Marker
+              position={me.position}
+              icon={() => <PersoSvg color={me.icon} />}
+            >
               <Popup>{me.name}</Popup>
             </Marker>
             <Polyline
@@ -133,7 +137,7 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
                 me.position,
                 restosList.find((resto) => resto.id === me.restoId).position,
               ]}
-              color="red"
+              color={me.icon}
               weight={4}
             />
             <Polyline
@@ -141,7 +145,7 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
                 restosList.find((resto) => resto.id === me.restoId).position,
                 arrivalPoint,
               ]}
-              color="red"
+              color={me.icon}
               weight={4}
             />
           </>

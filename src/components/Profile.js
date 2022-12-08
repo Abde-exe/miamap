@@ -5,7 +5,7 @@ function Profile({ user, size }) {
   console.log('user', user);
   return (
     <div>
-      <PersoSvg />
+      <PersoSvg color={user.icon} />
       <h2>{user?.name}</h2>
       <p>
         <strong> Distance : {user.distance} km</strong>

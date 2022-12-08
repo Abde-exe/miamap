@@ -13,7 +13,7 @@ function ListePersos({ me, persosList }) {
             <div>
               <h1>Salle {room}</h1>
               <br />
-              <Profile user={me} size={100} />
+              <Profile user={me} size={'scale(0.2)'} />
             </div>
           ) : null
         }
@@ -21,7 +21,7 @@ function ListePersos({ me, persosList }) {
         dataSource={persosList}
         renderItem={(item) => (
           <List.Item>
-            <Profile user={item} size={50} />
+            <Profile user={item} size={'scale(0.2)'} />
           </List.Item>
         )}
       />
