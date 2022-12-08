@@ -120,7 +120,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (users.length > 0) updateUsersData();
+    updateUsersData();
   }, [arrivalPoint]);
 
   const handleResto = (resto) => {
