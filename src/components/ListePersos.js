@@ -1,7 +1,7 @@
-import { List } from "antd";
-import { useContext } from "react";
-import { SocketContext } from "../services/socket";
-import Profile from "./Profile";
+import { Divider, List } from 'antd';
+import { useContext } from 'react';
+import { SocketContext } from '../services/socket';
+import Profile from './Profile';
 
 function ListePersos({ me, persosList }) {
   const { room } = useContext(SocketContext);
@@ -12,7 +12,7 @@ function ListePersos({ me, persosList }) {
           me ? (
             <div>
               <h1>Salle {room}</h1>
-              <br />
+              <Divider />
               <Profile user={me} me={true} />
             </div>
           ) : null
