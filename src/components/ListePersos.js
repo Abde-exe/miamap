@@ -1,26 +1,34 @@
-import { List } from "antd";
-import React, { useContext } from "react";
-import { SocketContext } from "../services/socket";
-import timeFormat from "../utils/timeFormat";
+import { List } from 'antd';
+import React, { useContext } from 'react';
+import { SocketContext } from '../services/socket';
+import timeFormat from '../utils/timeFormat';
+
 function ListePersos({ me, persosList }) {
   const { room } = useContext(SocketContext);
-
   return (
     <>
       <List
         header={
-          <div>
-            <h1>Salle {room}</h1>
-            {/* <img width={50} src={require(`../assets/${user.icon}`)} /> */}
-            <br />
-            <h2>{me?.name}</h2>
-          </div>
+          user ? (
+            <div>
+              <h1>Salle {room}</h1>
+              <img width={50} src={require('../assets/perso1.png')} />
+              <br />
+              <h2>{me?.name}</h2>
+              <p>
+                <strong> Distance : {user.distance} km</strong>
+              </p>
+              <p>
+                <strong>Reste : {timeformat(13 - user.time)}</strong>
+              </p>
+            </div>
+          ) : null
         }
         bordered
         dataSource={persosList}
         renderItem={(item) => (
           <List.Item>
-            <img width={50} src={require(`../assets/${item.icon}`)} />
+            <img width={50} src={require('../assets/perso2.png')} />
             <br />
             {item.name}
             <br />
