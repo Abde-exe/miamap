@@ -5,6 +5,7 @@ import MapView from "../components/MapView";
 import calculateTime from "../utils/calculateTime";
 import calculateDistance from "../utils/calculateDistance";
 import { SocketContext } from "../services/socket";
+import soustractTime from "../utils/soustractTime";
 
 const restos = [
   {
@@ -44,16 +45,13 @@ const Home = () => {
   const [users, setUsers] = useState([]);
   const [arrivalPoint, setArrivalPoint] = useState([48.893537, 2.226961]);
 
-  const setData = ({ name, data }) => {
-    const index = users.findIndex((u) => u.name === name);
+  const setData = ({ value }) => {
+    const index = users.findIndex((u) => u.name === value.name);
     let newArr = [...users];
     if (index === -1) {
-      newArr.push({
-        name,
-        ...data,
-      });
+      newArr.push(value);
     } else {
-      newArr[index] = { ...newArr[index], ...data };
+      newArr[index] = value;
     }
 
     setUsers([...newArr]);
@@ -70,7 +68,7 @@ const Home = () => {
   const updateUsersData = () => {
     let arr = [...users];
 
-    arr.map((user) => {
+    arr = arr.map((user) => {
       let resto = restos.find((resto) => resto.id === user.restoId);
       let distanceToResto = calculateDistance(
         user.position[0],
@@ -82,14 +80,14 @@ const Home = () => {
         resto.position[0],
         resto.position[1],
         arrivalPoint[0],
-        arrivalPoint[0]
+        arrivalPoint[1]
       );
       let distanceTotale = distanceToResto + distanceToArrivee;
       let timeTotal = calculateTime(distanceTotale, 5);
 
       return {
         ...user,
-        distance: distanceTotale,
+        distance: distanceTotale.toFixed(2),
         time: timeTotal,
       };
     });
@@ -97,9 +95,8 @@ const Home = () => {
     setUsers(arr);
   };
 
-  const updateArrivalPoint = ({ name, data }) => {
-    setArrivalPoint(data);
-    updateUsersData();
+  const updateArrivalPoint = ({ value }) => {
+    setArrivalPoint(value);
   };
 
   useEffect(() => {
@@ -111,7 +108,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    updateUsersData();
+    if (users.length > 0) updateUsersData();
   }, [arrivalPoint]);
 
   const handleResto = (resto) => {
@@ -137,13 +134,14 @@ const Home = () => {
       resto.position[0],
       resto.position[1],
       arrivalPoint[0],
-      arrivalPoint[0]
+      arrivalPoint[1]
     );
     let distanceTotale = distanceToResto + distanceToArrivee;
     let timeTotal = calculateTime(distanceTotale, 5);
 
     if (index === -1) {
       setUsers([
+        ...users,
         {
           ...user,
           restoId: resto.id,
@@ -161,22 +159,26 @@ const Home = () => {
       setUsers(newUsers);
     }
 
-    // sio.sendMydata({
-    //   ...user,
-    //   restoId: resto.id,
-    //   distance: distanceTotale,
-    //   time: timeTotal,
-    // });
+    sio.sendMyData({
+      ...user,
+      restoId: resto.id,
+      distance: distanceTotale,
+      time: timeTotal,
+    });
   };
 
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+  // useEffect(() => {
+  //   console.log(users);
+  // }, [users]);
 
   return (
     <div className="App">
       <header className="App-header">
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <h3 style={{ position: "absolute", zIndex: 99 }}>
+            Pour arriver à 13h : tu dois partir à{" "}
+            {soustractTime(13, users.find((u) => u.name === pseudo)?.time ?? 0)}
+          </h3>
           <ListeRestos
             restosList={restos}
             handleResto={handleResto}

@@ -61,8 +61,8 @@ function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
         const marker = markerRef.current;
         if (marker != null) {
           const point = marker.getLatLng();
-          sio.sendArrivalPoint([marker.lat, marker.lng]);
-          setArrivalPoint([marker.lat, marker.lng]);
+          sio.sendArrivalPoint([point.lat, point.lng]);
+          setArrivalPoint([point.lat, point.lng]);
         }
       },
     }),
@@ -95,7 +95,6 @@ function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {users.map((user, i) => {
-          console.log(user);
           return (
             <div key={i}>
               <Marker position={user.position} icon={perso1Icon}>

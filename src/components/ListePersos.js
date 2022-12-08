@@ -24,7 +24,7 @@ function ListePersos({ persosList }) {
             <br />
             {item.distance} km
             <br />
-            {item.time} min
+            {item.time.toFixed(0)} h {((item.time % 1) * 60).toFixed(0)}
           </List.Item>
         )}
       />
