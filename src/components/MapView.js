@@ -6,7 +6,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { SocketContext } from "../services/socket";
 
-function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
+function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
   const { sio } = useContext(SocketContext);
   const [draggable, setDraggable] = useState(true);
 
@@ -82,6 +82,7 @@ function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
   //     );
   //   });
   // };
+
   return (
     <>
       <MapContainer
@@ -121,6 +122,30 @@ function MapView({ users, restosList, arrivalPoint, setArrivalPoint }) {
             </div>
           );
         })}
+
+        {me && (
+          <>
+            <Marker position={me.position} icon={perso1Icon}>
+              <Popup>{me.name}</Popup>
+            </Marker>
+            <Polyline
+              positions={[
+                me.position,
+                restosList.find((resto) => resto.id === me.restoId).position,
+              ]}
+              color="red"
+              weight={4}
+            />
+            <Polyline
+              positions={[
+                restosList.find((resto) => resto.id === me.restoId).position,
+                arrivalPoint,
+              ]}
+              color="red"
+              weight={4}
+            />
+          </>
+        )}
 
         {/* <Marker position={perso2Coord} icon={perso2Icon}>
           <Popup>Perso2</Popup>

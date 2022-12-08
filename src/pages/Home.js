@@ -44,6 +44,7 @@ const restos = [
 const Home = () => {
   const { socket, sio, pseudo } = useContext(SocketContext);
   const [users, setUsers] = useState([]);
+  const [me, setMe] = useState();
   const [arrivalPoint, setArrivalPoint] = useState([48.893537, 2.226961]);
 
   const setData = ({ value }) => {
@@ -69,7 +70,7 @@ const Home = () => {
   const updateUsersData = () => {
     let arr = [...users];
 
-    arr = arr.map((user) => {
+    const calcul = (user) => {
       let resto = restos.find((resto) => resto.id === user.restoId);
       let distanceToResto = calculateDistance(
         user.position[0],
@@ -91,9 +92,16 @@ const Home = () => {
         distance: distanceTotale.toFixed(2),
         time: timeTotal,
       };
+    };
+
+    arr = arr.map((user) => {
+      return calcul(user);
     });
 
     setUsers(arr);
+    if (me !== undefined) {
+      setMe(calcul(me));
+    }
   };
 
   const updateArrivalPoint = ({ value }) => {
@@ -113,12 +121,10 @@ const Home = () => {
   }, [arrivalPoint]);
 
   const handleResto = (resto) => {
-    const index = users.findIndex((user) => user.name === pseudo);
-    let user = users[index];
-    let newUsers = [...users];
+    let newMe = me;
 
-    if (index === -1) {
-      user = {
+    if (me === undefined) {
+      newMe = {
         name: pseudo,
         position: coGenerator(48.893537, 2.226961, 2),
         icon: "perso1.png",
@@ -126,8 +132,8 @@ const Home = () => {
     }
 
     let distanceToResto = calculateDistance(
-      user.position[0],
-      user.position[1],
+      newMe.position[0],
+      newMe.position[1],
       resto.position[0],
       resto.position[1]
     );
@@ -140,58 +146,39 @@ const Home = () => {
     let distanceTotale = distanceToResto + distanceToArrivee;
     let timeTotal = calculateTime(distanceTotale, 5);
 
-    if (index === -1) {
-      setUsers([
-        ...users,
-        {
-          ...user,
-          restoId: resto.id,
-          distance: distanceTotale,
-          time: timeTotal,
-        },
-      ]);
-    } else {
-      newUsers[index] = {
-        ...user,
-        restoId: resto.id,
-        distance: distanceTotale,
-        time: timeTotal,
-      };
-      setUsers(newUsers);
-    }
+    setMe({
+      ...newMe,
+      restoId: resto.id,
+      distance: distanceTotale,
+      time: timeTotal,
+    });
 
     sio.sendMyData({
-      ...user,
+      ...newMe,
       restoId: resto.id,
       distance: distanceTotale,
       time: timeTotal,
     });
   };
 
-  // useEffect(() => {
-  //   console.log(users);
-  // }, [users]);
-
   return (
     <div className="App">
       <header className="App-header">
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <h3 style={{ position: "absolute", zIndex: 999 }}>
-            Pour arriver à 13h : tu dois partir à{" "}
-            {timeFormat(13 - (users.find((u) => u.name === pseudo)?.time ?? 0))}
-          </h3>
-          <ListeRestos
-            restosList={restos}
-            handleResto={handleResto}
-            user={users.find((u) => u.name === pseudo)}
-          />
+          {me?.time && (
+            <h3 style={{ position: "absolute", zIndex: 999 }}>
+              Pour arriver à 13h : tu dois partir à {timeFormat(13 - me.time)}
+            </h3>
+          )}
+          <ListeRestos restosList={restos} handleResto={handleResto} me={me} />
           <MapView
             users={users}
+            me={me}
             arrivalPoint={arrivalPoint}
             setArrivalPoint={setArrivalPoint}
             restosList={restos}
           />
-          <ListePersos persosList={users} />
+          <ListePersos me={me} persosList={users} />
         </div>
       </header>
     </div>

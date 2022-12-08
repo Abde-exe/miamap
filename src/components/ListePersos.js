@@ -2,8 +2,9 @@ import { List } from "antd";
 import React, { useContext } from "react";
 import { SocketContext } from "../services/socket";
 import timeFormat from "../utils/timeFormat";
-function ListePersos({ persosList }) {
+function ListePersos({ me, persosList }) {
   const { room } = useContext(SocketContext);
+
   return (
     <>
       <List
@@ -12,7 +13,7 @@ function ListePersos({ persosList }) {
             <h1>Salle {room}</h1>
             {/* <img width={50} src={require(`../assets/${user.icon}`)} /> */}
             <br />
-            {/* <h2>{user.name}</h2> */}
+            <h2>{me?.name}</h2>
           </div>
         }
         bordered
