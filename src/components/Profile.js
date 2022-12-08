@@ -8,7 +8,7 @@ function Profile({ user, size }) {
       <PersoSvg />
       <h2>{user?.name}</h2>
       <p>
-        <strong> Distance : {user.distance.toFixed(2)} km</strong>
+        <strong> Distance : {user.distance} km</strong>
       </p>
       <p>
         <strong>Reste : {timeFormat(13 - user.time)}</strong>
