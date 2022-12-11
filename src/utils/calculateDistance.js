@@ -1,5 +1,4 @@
 /**
-
 Cette fonction prend deux coordonnées de latitude et de longitude en degrés décimaux, et renvoie
 la distance en kilomètres entre les deux points en utilisant la formule de la distance moyenne de la Terre.
 @param {Number} lat1 - Latitude en degrés décimaux du premier point

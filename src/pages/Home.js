@@ -168,7 +168,6 @@ const Home = () => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <SelectTime me={me} />
           <ListeRestos restosList={restos} handleResto={handleResto} me={me} />
-
           <MapView
             users={users}
             me={me}

@@ -1,6 +1,5 @@
 /**
-
-Cette fonction prend des coordonnées de latitude et de longitude en degrés décimaux et un rayon en kilomètres,
+Cette fonction prend des coordonnées de latitude et de longitude en degrés décimaux et un rayon en km,
 et génère des coordonnées aléatoires dans un rayon autour des coordonnées d'origine.
 @param {Number} lat - Latitude en degrés décimaux
 @param {Number} lng - Longitude en degrés décimaux

@@ -24,14 +24,9 @@ function MapView({ users, me, restosList, arrivalPoint, setArrivalPoint }) {
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
   });
+
   const perso2Icon = L.icon({
     iconUrl: require("../assets/perso2.png"),
-    iconSize: [30, 30],
-    shadowSize: [68, 95],
-    shadowAnchor: [22, 94],
-  });
-  const perso3Icon = L.icon({
-    iconUrl: require("../assets/perso3.png"),
     iconSize: [30, 30],
     shadowSize: [68, 95],
     shadowAnchor: [22, 94],
